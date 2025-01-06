@@ -4,6 +4,7 @@ import { AppComponent } from './app/app.component';
 
 import { importProvidersFrom } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http'; // Import HttpClientModule
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -27,5 +28,6 @@ bootstrapApplication(AppComponent, {
       { path: '**', redirectTo: 'login' }, // Wildcard route for undefined paths
     ]),
     importProvidersFrom(FormsModule), // Add FormsModule globally for ngModel
+    importProvidersFrom(HttpClientModule), // Add HttpClientModule globally for HttpClient
   ],
 }).catch((err) => console.error(err));
