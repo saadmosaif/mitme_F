@@ -1,37 +1,36 @@
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms'; // Import FormsModule
-import { HttpClientModule } from '@angular/common/http'; // Import HttpClientModule
-import { AuthService } from '../../shared/auth.service'; // Import the AuthService
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { AuthService } from '../../shared/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, HttpClientModule], // Add FormsModule and HttpClientModule
+  imports: [FormsModule, HttpClientModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
 export class LoginComponent {
   credentials = { username: '', password: '' };
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   login() {
-    console.log('Attempting to log in...');
-    console.log('Provided credentials:', this.credentials);
-
-    // Validate input fields
     if (!this.credentials.username || !this.credentials.password) {
-      console.error('Validation failed: Username or password is missing.');
       alert('Please enter both username and password.');
       return;
     }
 
-    // Call AuthService for real login
     this.authService.login(this.credentials).subscribe(
       (response) => {
         console.log('Login successful:', response);
+
+        // Save token in localStorage or sessionStorage
+        localStorage.setItem('authToken', response.token); // Replace with sessionStorage if needed
+
         alert('Login successful!');
-        // Perform additional actions on success (e.g., navigate to another page)
+        this.router.navigate(['/meeting']); // Redirect to dashboard
       },
       (error) => {
         console.error('Login failed:', error);
