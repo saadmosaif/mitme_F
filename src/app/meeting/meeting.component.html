@@ -1,28 +1,51 @@
 <div class="meeting-container">
-  <h1>Meetings</h1>
+  <h2>Meetings</h2>
 
-  <!-- Display error message -->
-  <div *ngIf="errorMessage" class="error-message">
-    <p>{{ errorMessage }}</p>
+  <!-- Create New Meeting Form -->
+  <div class="create-meeting-form">
+    <h3>Create a New Meeting</h3>
+    <form (ngSubmit)="createMeeting()">
+      <div class="form-group">
+        <label for="title">Title:</label>
+        <input
+          id="title"
+          type="text"
+          [(ngModel)]="newMeeting.title"
+          name="title"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="description">Description:</label>
+        <textarea
+          id="description"
+          [(ngModel)]="newMeeting.description"
+          name="description"
+          required
+        ></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Create Meeting</button>
+    </form>
   </div>
 
-  <!-- Show loading indicator if no meetings yet and no error -->
-  <div *ngIf="!meetings.length && !errorMessage" class="loading">
-    <p>Loading meetings...</p>
+  <!-- Display Meetings -->
+  <div *ngIf="meetings && meetings.length > 0; else noMeetings">
+    <div *ngFor="let meeting of meetings" class="meeting-card">
+      <h3>{{ meeting.title }}</h3>
+      <p><strong>Description:</strong> {{ meeting.description }}</p>
+      <p><strong>Created At:</strong> {{ meeting.createdAt | date: 'short' }}</p>
+      <p><strong>Host:</strong> {{ meeting.host }}</p>
+
+      <!-- Action Buttons -->
+      <button class="btn btn-warning" (click)="editMeeting(meeting)">Edit</button>
+      <button class="btn btn-danger" (click)="deleteMeeting(meeting.id)">
+        Delete
+      </button>
+    </div>
   </div>
 
-  <!-- Show no meetings message if no meetings exist -->
-  <div *ngIf="meetings.length === 0 && !errorMessage" class="no-meetings">
-    <p>No meetings found.</p>
-  </div>
-
-  <!-- Display list of meetings -->
-  <ul *ngIf="meetings.length > 0" class="meeting-list">
-    <li *ngFor="let meeting of meetings" class="meeting-item">
-      <h2>{{ meeting.title }}</h2>
-      <p>{{ meeting.description }}</p>
-      <p><strong>Time:</strong> {{ meeting.time | date: 'medium' }}</p>
-      <button (click)="joinMeeting(meeting.id)">Join Meeting</button>
-    </li>
-  </ul>
+  <!-- No Meetings Message -->
+  <ng-template #noMeetings>
+    <p>No meetings available. Please create a new meeting.</p>
+  </ng-template>
 </div>
