@@ -1,50 +1,67 @@
 <div class="meeting-container">
   <h2>Meetings</h2>
 
-  <!-- Create New Meeting Form -->
-  <div class="create-meeting-form">
+  <!-- Form to Create a New Meeting -->
+  <div class="new-meeting-form">
     <h3>Create a New Meeting</h3>
     <form (ngSubmit)="createMeeting()">
       <div class="form-group">
-        <label for="title">Title:</label>
+        <label for="title">Title</label>
         <input
-          id="title"
           type="text"
+          id="title"
           [(ngModel)]="newMeeting.title"
           name="title"
           required
+          class="form-control"
         />
       </div>
       <div class="form-group">
-        <label for="description">Description:</label>
+        <label for="description">Description</label>
         <textarea
           id="description"
           [(ngModel)]="newMeeting.description"
           name="description"
           required
+          class="form-control"
         ></textarea>
       </div>
       <button type="submit" class="btn btn-primary">Create Meeting</button>
     </form>
   </div>
 
+  <hr />
+
   <!-- Display Meetings -->
   <div *ngIf="meetings && meetings.length > 0; else noMeetings">
+    <h3>All Meetings</h3>
     <div *ngFor="let meeting of meetings" class="meeting-card">
-      <h3>{{ meeting.title }}</h3>
+      <h4>{{ meeting.title }}</h4>
       <p><strong>Description:</strong> {{ meeting.description }}</p>
       <p><strong>Created At:</strong> {{ meeting.createdAt | date: 'short' }}</p>
       <p><strong>Host:</strong> {{ meeting.host }}</p>
 
       <!-- Action Buttons -->
-      <button class="btn btn-warning" (click)="editMeeting(meeting)">Edit</button>
-      <button class="btn btn-danger" (click)="deleteMeeting(meeting.id)">
-        Delete
-      </button>
+      <div class="meeting-actions">
+        <button
+          *ngIf="meeting.host === currentUser"
+          class="btn btn-warning"
+          (click)="editMeeting(meeting)"
+        >
+          Edit
+        </button>
+        <button
+          *ngIf="meeting.host === currentUser"
+          class="btn btn-danger"
+          (click)="deleteMeeting(meeting.id)"
+        >
+          Delete
+        </button>
+      </div>
     </div>
   </div>
 
-  <!-- No Meetings Message -->
+  <!-- No Meetings Template -->
   <ng-template #noMeetings>
     <p>No meetings available. Please create a new meeting.</p>
   </ng-template>

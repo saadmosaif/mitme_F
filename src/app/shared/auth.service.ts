@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +16,14 @@ export class AuthService {
       responseType: 'json',
     });
   }
+  saveToken(token: string): void {
+    localStorage.setItem('authToken', token);
+
+    // Decode the token and save the username
+    const decoded: any = jwtDecode(token);
+    localStorage.setItem('username', decoded.sub);
+  }
+
   saveUserInfo(token: string, username: string): void {
     localStorage.setItem('authToken', token); // Save token
     localStorage.setItem('username', username); // Save username
@@ -30,9 +39,7 @@ getUsername(): string | null {
     });
   }
 
-  saveToken(token: string): void {
-    localStorage.setItem('authToken', token); // Save the token
-  }
+  
 
   getToken(): string | null {
     return localStorage.getItem('authToken'); // Retrieve the token
@@ -74,4 +81,5 @@ getUsername(): string | null {
       headers: this.getAuthHeaders(),
     });
   }
+  
 }
