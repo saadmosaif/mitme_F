@@ -1,5 +1,28 @@
-<div>
-    <h2>Meeting Page</h2>
-    <p>This is the meeting page placeholder.</p>
+<div class="meeting-container">
+  <h1>Meetings</h1>
+
+  <!-- Display error message -->
+  <div *ngIf="errorMessage" class="error-message">
+    <p>{{ errorMessage }}</p>
   </div>
-  
+
+  <!-- Show loading indicator if no meetings yet and no error -->
+  <div *ngIf="!meetings.length && !errorMessage" class="loading">
+    <p>Loading meetings...</p>
+  </div>
+
+  <!-- Show no meetings message if no meetings exist -->
+  <div *ngIf="meetings.length === 0 && !errorMessage" class="no-meetings">
+    <p>No meetings found.</p>
+  </div>
+
+  <!-- Display list of meetings -->
+  <ul *ngIf="meetings.length > 0" class="meeting-list">
+    <li *ngFor="let meeting of meetings" class="meeting-item">
+      <h2>{{ meeting.title }}</h2>
+      <p>{{ meeting.description }}</p>
+      <p><strong>Time:</strong> {{ meeting.time | date: 'medium' }}</p>
+      <button (click)="joinMeeting(meeting.id)">Join Meeting</button>
+    </li>
+  </ul>
+</div>

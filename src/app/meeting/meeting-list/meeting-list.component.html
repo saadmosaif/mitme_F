@@ -1,7 +1,7 @@
-<p>meeting-list works!</p>
-<h2>Meeting List</h2>
+<h3>Meeting List</h3>
 <ul>
   <li *ngFor="let meeting of meetings">
-    <a [routerLink]="['/meeting', meeting.id]">{{ meeting.title }}</a>
+    <span>{{ meeting.title }}</span>
+    <button (click)="joinMeeting(meeting.id)">Join</button>
   </li>
 </ul>

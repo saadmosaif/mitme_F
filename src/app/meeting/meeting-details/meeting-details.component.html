@@ -1,5 +1,6 @@
-<p>meeting-details works!</p>
 <h2>Meeting Details</h2>
-<p>Title: {{ meeting?.title }}</p>
-<p>Host: {{ meeting?.hostUsername }}</p>
-<p>ID: {{ meeting?.id }}</p>
+<div *ngIf="meetingDetails">
+  <p><strong>Title:</strong> {{ meetingDetails.title }}</p>
+  <p><strong>Description:</strong> {{ meetingDetails.description }}</p>
+  <p><strong>Created At:</strong> {{ meetingDetails.createdAt }}</p>
+</div>

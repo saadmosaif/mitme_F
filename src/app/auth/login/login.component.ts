@@ -1,40 +1,51 @@
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms'; // For ngModel
+import { Router } from '@angular/router'; // Import Router
 import { AuthService } from '../../shared/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, HttpClientModule],
+  imports: [FormsModule], // Add FormsModule for ngModel
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
 export class LoginComponent {
-  credentials = { username: '', password: '' };
+  credentials = { username: '', password: '' }; // Holds user input
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) {} // Inject AuthService and Router
 
+  /**
+   * Handles the login logic when the user submits their credentials.
+   */
   login() {
-    if (!this.credentials.username || !this.credentials.password) {
-      alert('Please enter both username and password.');
-      return;
-    }
-
     this.authService.login(this.credentials).subscribe(
-      (response) => {
+      (response: any) => {
         console.log('Login successful:', response);
 
-        // Save token in localStorage or sessionStorage
-        localStorage.setItem('authToken', response.token); // Replace with sessionStorage if needed
+        // Ensure the response contains a token
+        if (response && response.token) {
+          // Save the token in localStorage
+          localStorage.setItem('authToken', response.token);
 
-        alert('Login successful!');
-        this.router.navigate(['/meeting']); // Redirect to dashboard
+          // Navigate to the meeting page
+          this.router.navigate(['/meeting']);
+        } else {
+          console.error('No token found in the response');
+          alert('Unexpected error: No token received.');
+        }
       },
       (error) => {
         console.error('Login failed:', error);
-        alert('Invalid username or password.');
+
+        // Display error messages based on HTTP status codes
+        if (error.status === 403) {
+          alert('Invalid credentials. Please check your username and password.');
+        } else if (error.status === 500) {
+          alert('Server error. Please try again later.');
+        } else {
+          alert('An unexpected error occurred. Please try again.');
+        }
       }
     );
   }

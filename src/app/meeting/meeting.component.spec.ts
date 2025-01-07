@@ -1,23 +1,36 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../shared/auth.service';
 
-import { MeetingComponent } from './meeting.component';
+@Component({
+  selector: 'app-meeting',
+  templateUrl: './meeting.component.html',
+  styleUrls: ['./meeting.component.css'],
+})
+export class MeetingComponent implements OnInit {
+  meetings: any[] = []; // Array to hold the list of meetings
+  errorMessage: string = ''; // For error messages
 
-describe('MeetingComponent', () => {
-  let component: MeetingComponent;
-  let fixture: ComponentFixture<MeetingComponent>;
+  constructor(private authService: AuthService) {}
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [MeetingComponent]
-    })
-    .compileComponents();
+  ngOnInit(): void {
+    this.fetchMeetings(); // Fetch meetings when the component initializes
+  }
 
-    fixture = TestBed.createComponent(MeetingComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-});
+  fetchMeetings(): void {
+    this.authService.getMeetings().subscribe(
+      (response) => {
+        console.log('Meetings fetched successfully:', response);
+        this.meetings = response; // Assign the fetched meetings to the array
+      },
+      (error) => {
+        console.error('Error fetching meetings:', error);
+        if (error.status === 403) {
+          this.errorMessage = 'Unauthorized: Please log in again.';
+        } else {
+          this.errorMessage = 'Failed to load meetings. Please try again later.';
+        }
+        alert(this.errorMessage);
+      }
+    );
+  }
+}

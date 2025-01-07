@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -10,11 +10,12 @@ export class MeetingService {
 
   constructor(private http: HttpClient) {}
 
-  getAllMeetings(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl);
+  getMeetings(): Observable<any> {
+    const token = localStorage.getItem('authToken'); // Retrieve token from localStorage
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`); // Add Bearer token
+    return this.http.get('http://localhost:8080/api/meetings', { headers }); // Include headers in request
   }
-
-  getMeeting(id: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`);
-  }
+  
+  
+  
 }
