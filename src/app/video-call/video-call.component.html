@@ -17,8 +17,18 @@
   <div class="call-controls">
     <button class="btn btn-success" (click)="startCall()">Start Call</button>
     <button class="btn btn-danger" (click)="endCall()">End Call</button>
-  </div>
+    
+    <button (click)="startScreenShare()">Share Screen</button>
 
+  </div>
+  <div class="controls">
+    <button (click)="toggleAudio()">{{ isAudioMuted ? 'Unmute' : 'Mute' }} Audio</button>
+    <button (click)="toggleVideo()">{{ isVideoMuted ? 'Unmute' : 'Mute' }} Video</button>
+    <button (click)="startRecording()">Start Recording</button>
+    <button (click)="stopRecording()">Stop Recording</button>
+
+  </div>
+  
   <!-- Chat Section -->
   <div class="chat-section">
     <h3>Chat</h3>

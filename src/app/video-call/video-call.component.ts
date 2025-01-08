@@ -22,6 +22,10 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   participants: string[] = []; // List of participants in the meeting
   chatInput: string = ''; // Chat input model
   chatMessages: { user: string; message: string }[] = []; // Chat messages
+  isAudioMuted = false;
+isVideoMuted = false;
+private mediaRecorder!: MediaRecorder;
+private recordedChunks: Blob[] = [];
 
   constructor(private router: Router, private route: ActivatedRoute) {}
 
@@ -219,5 +223,65 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     this.signalingServer.send(JSON.stringify(chatMessage));
     this.chatInput = ''; // Clear the input field
   }
+  async startScreenShare(): Promise<void> {
+    try {
+      const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+      const screenTrack = screenStream.getVideoTracks()[0];
+  
+      // Replace video track in the PeerConnection
+      const sender = this.peerConnection.getSenders().find(s => s.track?.kind === 'video');
+      if (sender) {
+        sender.replaceTrack(screenTrack);
+      }
+  
+      screenTrack.onended = () => {
+        // Revert back to the webcam when screen sharing stops
+        const webcamTrack = this.localStream.getVideoTracks()[0];
+        if (sender) sender.replaceTrack(webcamTrack);
+      };
+    } catch (error) {
+      console.error('Error sharing screen:', error);
+    }
+  }
+  toggleAudio(): void {
+    this.localStream.getAudioTracks().forEach(track => track.enabled = !track.enabled);
+    this.isAudioMuted = !this.isAudioMuted;
+  }
+  
+  toggleVideo(): void {
+    this.localStream.getVideoTracks().forEach(track => track.enabled = !track.enabled);
+    this.isVideoMuted = !this.isVideoMuted;
+  }
+  startRecording(): void {
+    try {
+      const stream = new MediaStream([...this.localStream.getTracks(), ...this.peerConnection.getReceivers().map(r => r.track!).filter(Boolean)]);
+      this.mediaRecorder = new MediaRecorder(stream);
+  
+      this.mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          this.recordedChunks.push(event.data);
+        }
+      };
+  
+      this.mediaRecorder.start();
+      console.log('Recording started');
+    } catch (error) {
+      console.error('Error starting recording:', error);
+    }
+  }
+  
+  stopRecording(): void {
+    if (this.mediaRecorder) {
+      this.mediaRecorder.stop();
+      const blob = new Blob(this.recordedChunks, { type: 'video/webm' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `meeting-${this.meetingId}.webm`;
+      a.click();
+      console.log('Recording stopped and downloaded');
+    }
+  }
+  
   
 }
