@@ -1,19 +1,40 @@
 <div class="video-call-container">
-  <h2>Video Call</h2>
+  <h2>Video Call - Meeting ID: {{ meetingId }}</h2>
 
+  <!-- Video Grid -->
   <div class="video-grid">
-    <div>
-      <h3>Local Video</h3>
+    <div class="video-box">
+      <h4>{{ currentUser }}</h4>
       <video #localVideo autoplay muted></video>
     </div>
-    <div>
-      <h3>Remote Video</h3>
+    <div class="video-box">
+      <h4>Remote Participant</h4>
       <video #remoteVideo autoplay></video>
     </div>
   </div>
 
-  <div class="controls">
+  <!-- Call Control Buttons -->
+  <div class="call-controls">
     <button class="btn btn-success" (click)="startCall()">Start Call</button>
     <button class="btn btn-danger" (click)="endCall()">End Call</button>
+  </div>
+
+  <!-- Chat Section -->
+  <div class="chat-section">
+    <h3>Chat</h3>
+    <div class="chat-messages">
+      <div *ngFor="let chat of chatMessages" class="chat-message">
+        <strong>{{ chat.user }}:</strong> {{ chat.message }}
+      </div>
+    </div>
+    <div class="chat-input">
+      <input
+        type="text"
+        [(ngModel)]="chatInput"
+        placeholder="Type your message..."
+        class="form-control"
+      />
+      <button class="btn btn-primary" (click)="sendChatMessage()">Send</button>
+    </div>
   </div>
 </div>

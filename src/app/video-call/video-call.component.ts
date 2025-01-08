@@ -1,9 +1,12 @@
 import { Component, ViewChild, ElementRef, OnDestroy, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { CommonModule } from '@angular/common'; // Import CommonModule for *ngFor and *ngIf
+import { FormsModule } from '@angular/forms'; // Import FormsModule for ngModel
 
 @Component({
   selector: 'app-video-call',
   standalone: true,
+  imports: [CommonModule, FormsModule], // Add CommonModule and FormsModule
   templateUrl: './video-call.component.html',
   styleUrls: ['./video-call.component.css'],
 })
@@ -15,6 +18,10 @@ export class VideoCallComponent implements OnInit, OnDestroy {
   private peerConnection!: RTCPeerConnection;
   private signalingServer!: WebSocket;
   meetingId: string | null = null;
+  currentUser: string = '';
+  participants: string[] = []; // List of participants in the meeting
+  chatInput: string = ''; // Chat input model
+  chatMessages: { user: string; message: string }[] = []; // Chat messages
 
   constructor(private router: Router, private route: ActivatedRoute) {}
 
@@ -30,6 +37,9 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       return;
     }
     console.log('[DEBUG] Meeting ID:', this.meetingId);
+
+    this.currentUser = this.getCurrentUser();
+    console.log('[DEBUG] Current user:', this.currentUser);
 
     // Initialize WebSocket connection
     this.initializeSignalingServer();
@@ -48,13 +58,30 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     }
   }
 
+  private getCurrentUser(): string {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1])); // Decode JWT payload
+        return payload.sub || 'Unknown User'; // Extract username
+      } catch (error) {
+        console.error('Error decoding token:', error);
+      }
+    }
+    return 'Unknown User';
+  }
+
   private initializeSignalingServer(): void {
     try {
       this.signalingServer = new WebSocket('ws://localhost:8080/signaling');
       this.signalingServer.onopen = () => {
         console.log('Connected to the signaling server');
         this.signalingServer.send(
-          JSON.stringify({ type: 'join', meetingId: this.meetingId })
+          JSON.stringify({
+            type: 'join',
+            meetingId: this.meetingId,
+            username: this.currentUser,
+          })
         );
       };
 
@@ -72,6 +99,12 @@ export class VideoCallComponent implements OnInit, OnDestroy {
     try {
       const data = JSON.parse(message.data);
       switch (data.type) {
+        case 'chat':
+          this.chatMessages.push({
+            user: data.user,
+            message: data.message,
+          });
+          break;
         case 'offer':
           await this.handleOffer(data.offer);
           break;
@@ -88,6 +121,7 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       console.error('Error processing signaling message:', error);
     }
   }
+  
 
   async startCall(): Promise<void> {
     try {
@@ -165,4 +199,25 @@ export class VideoCallComponent implements OnInit, OnDestroy {
       this.signalingServer.close();
     }
   }
+  sendChatMessage(): void {
+    if (this.chatInput.trim() === '') {
+      console.warn('[DEBUG] Empty message, not sending.');
+      return;
+    }
+  
+    // Construct the chat message
+    const chatMessage = {
+      type: 'chat',
+      meetingId: this.meetingId,
+      user: this.currentUser,
+      message: this.chatInput,
+    };
+  
+    console.log('[DEBUG] Sending chat message:', chatMessage);
+  
+    // Send the message through WebSocket
+    this.signalingServer.send(JSON.stringify(chatMessage));
+    this.chatInput = ''; // Clear the input field
+  }
+  
 }
