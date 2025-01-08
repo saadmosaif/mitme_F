@@ -1,33 +1,23 @@
 import { Routes } from '@angular/router';
+import { AuthGuard } from './auth.guard'; // Import the guard
 
 export const routes: Routes = [
-  // Redirect the root path to the login page
   { path: '', redirectTo: 'login', pathMatch: 'full' },
-
-  // Lazy-load the LoginComponent
   {
     path: 'login',
     loadComponent: () =>
       import('./auth/login/login.component').then((m) => m.LoginComponent),
   },
-
-  // Lazy-load the RegisterComponent
   {
     path: 'register',
     loadComponent: () =>
-      import('./auth/register/register.component').then(
-        (m) => m.RegisterComponent
-      ),
+      import('./auth/register/register.component').then((m) => m.RegisterComponent),
   },
-
-  // Lazy-load the MeetingComponent (Meeting Dashboard)
   {
     path: 'meeting',
     loadComponent: () =>
       import('./meeting/meeting.component').then((m) => m.MeetingComponent),
   },
-
-  // Lazy-load the MeetingListComponent (List of meetings)
   {
     path: 'meeting/list',
     loadComponent: () =>
@@ -35,8 +25,6 @@ export const routes: Routes = [
         (m) => m.MeetingListComponent
       ),
   },
-
-  // Lazy-load the MeetingDetailsComponent (Details of a specific meeting)
   {
     path: 'meeting/:id',
     loadComponent: () =>
@@ -44,22 +32,19 @@ export const routes: Routes = [
         (m) => m.MeetingDetailsComponent
       ),
   },
-
-  // Lazy-load the VideoCallComponent
   {
-    path: 'video-call',
+    path: 'video-call/:id',
     loadComponent: () =>
-      import('./video-call/video-call.component').then((m) => m.VideoCallComponent),
+      import('./video-call/video-call.component').then(
+        (m) => m.VideoCallComponent
+      ),
   },
-
-  // Lazy-load the ChatComponent
+  
   {
     path: 'chat',
     loadComponent: () =>
       import('./chat/chat.component').then((m) => m.ChatComponent),
   },
-
-  // Handle undefined routes with a wildcard route
   {
     path: '**',
     loadComponent: () =>

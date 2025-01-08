@@ -1,68 +1,113 @@
-<div class="meeting-container">
-  <h2>Meetings</h2>
+<div class="container mt-5">
+  <!-- Page Header -->
+  <header class="text-center mb-5">
+    <h1 class="display-5 fw-bold text-primary">Meeting Manager</h1>
+    <p class="text-muted">Organize and manage your meetings effortlessly.</p>
+  </header>
 
-  <!-- Form to Create a New Meeting -->
-  <div class="new-meeting-form">
-    <h3>Create a New Meeting</h3>
-    <form (ngSubmit)="createMeeting()">
-      <div class="form-group">
-        <label for="title">Title</label>
-        <input
-          type="text"
-          id="title"
-          [(ngModel)]="newMeeting.title"
-          name="title"
-          required
-          class="form-control"
-        />
+  <!-- Create New Meeting Section -->
+  <section class="mb-5">
+    <div class="card shadow-lg">
+      <div class="card-header bg-primary text-white">
+        <h3 class="mb-0">Create a New Meeting</h3>
       </div>
-      <div class="form-group">
-        <label for="description">Description</label>
-        <textarea
-          id="description"
-          [(ngModel)]="newMeeting.description"
-          name="description"
-          required
-          class="form-control"
-        ></textarea>
-      </div>
-      <button type="submit" class="btn btn-primary">Create Meeting</button>
-    </form>
-  </div>
+      <div class="card-body">
+        <form (ngSubmit)="createMeeting()" #meetingForm="ngForm">
+          <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input
+              type="text"
+              id="title"
+              [(ngModel)]="newMeeting.title"
+              name="title"
+              required
+              class="form-control"
+              placeholder="Enter meeting title"
+              [ngClass]="{'is-invalid': meetingForm.submitted && !meetingForm.controls['title'].valid}"
+            />
+            <div *ngIf="meetingForm.submitted && !meetingForm.controls['title'].valid" class="invalid-feedback">
+              Title is required.
+            </div>
+          </div>
 
-  <hr />
+          <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea
+              id="description"
+              [(ngModel)]="newMeeting.description"
+              name="description"
+              required
+              class="form-control"
+              rows="4"
+              placeholder="Enter meeting description"
+              [ngClass]="{'is-invalid': meetingForm.submitted && !meetingForm.controls['description'].valid}"
+            ></textarea>
+            <div *ngIf="meetingForm.submitted && !meetingForm.controls['description'].valid" class="invalid-feedback">
+              Description is required.
+            </div>
+          </div>
 
-  <!-- Display Meetings -->
-  <div *ngIf="meetings && meetings.length > 0; else noMeetings">
-    <h3>All Meetings</h3>
-    <div *ngFor="let meeting of meetings" class="meeting-card">
-      <h4>{{ meeting.title }}</h4>
-      <p><strong>Description:</strong> {{ meeting.description }}</p>
-      <p><strong>Created At:</strong> {{ meeting.createdAt | date: 'short' }}</p>
-      <p><strong>Host:</strong> {{ meeting.host }}</p>
-
-      <!-- Action Buttons -->
-      <div class="meeting-actions">
-        <button
-          *ngIf="meeting.host === currentUser"
-          class="btn btn-warning"
-          (click)="editMeeting(meeting)"
-        >
-          Edit
-        </button>
-        <button
-          *ngIf="meeting.host === currentUser"
-          class="btn btn-danger"
-          (click)="deleteMeeting(meeting.id)"
-        >
-          Delete
-        </button>
+          <div class="d-grid">
+            <button type="submit" class="btn btn-primary" [disabled]="!meetingForm.valid">Create Meeting</button>
+          </div>
+        </form>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- No Meetings Template -->
-  <ng-template #noMeetings>
-    <p>No meetings available. Please create a new meeting.</p>
-  </ng-template>
+  <!-- Meetings List Section -->
+  <section>
+    <h2 class="mb-4 text-primary text-center">Your Meetings</h2>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="text-center mb-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="text-muted">Loading meetings...</p>
+    </div>
+
+    <!-- Meetings Cards -->
+    <div class="row g-4" *ngIf="meetings && meetings.length > 0; else noMeetings">
+      <div class="col-md-6 col-lg-4" *ngFor="let meeting of meetings">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <h5 class="card-title">{{ meeting.title }}</h5>
+            <p class="card-text text-muted"><strong>Description:</strong> {{ meeting.description }}</p>
+            <p class="card-text">
+              <strong>Created At:</strong> {{ meeting.createdAt | date: 'mediumDate' }}
+            </p>
+            <p class="card-text"><strong>Host:</strong> {{ meeting.host }}</p>
+          </div>
+          <div class="card-footer bg-white d-flex justify-content-between align-items-center">
+            <div>
+              <button
+                *ngIf="meeting.host === currentUser"
+                class="btn btn-sm btn-outline-warning me-2"
+                (click)="editMeeting(meeting)"
+              >
+                Edit
+              </button>
+              <button
+                *ngIf="meeting.host === currentUser"
+                class="btn btn-sm btn-outline-danger"
+                (click)="deleteMeeting(meeting.id)"
+              >
+                Delete
+              </button>
+            </div>
+            <button class="btn btn-sm btn-success" (click)="startVideoCall(meeting.id)">Join Video Call</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- No Meetings Template -->
+    <ng-template #noMeetings>
+      <div class="text-center text-muted mt-5">
+        <i class="bi bi-calendar-x fs-1"></i>
+        <p class="mt-3">No meetings available. Create a new meeting to get started.</p>
+      </div>
+    </ng-template>
+  </section>
 </div>

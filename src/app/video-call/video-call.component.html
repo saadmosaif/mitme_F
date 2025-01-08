@@ -1,5 +1,19 @@
-<p>video-call works!</p>
-<h2>Video Call</h2>
-<video #localVideo autoplay muted></video>
-<video #remoteVideo autoplay></video>
-<button (click)="startCall()">Start Call</button>
+<div class="video-call-container">
+  <h2>Video Call</h2>
+
+  <div class="video-grid">
+    <div>
+      <h3>Local Video</h3>
+      <video #localVideo autoplay muted></video>
+    </div>
+    <div>
+      <h3>Remote Video</h3>
+      <video #remoteVideo autoplay></video>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="btn btn-success" (click)="startCall()">Start Call</button>
+    <button class="btn btn-danger" (click)="endCall()">End Call</button>
+  </div>
+</div>

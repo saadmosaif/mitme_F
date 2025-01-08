@@ -25,6 +25,11 @@ bootstrapApplication(AppComponent, {
         loadComponent: () =>
           import('./app/meeting/meeting.component').then((m) => m.MeetingComponent),
       },
+      {
+        path: 'video-call/:id',
+        loadComponent: () =>
+          import('./app/video-call/video-call.component').then((m) => m.VideoCallComponent),
+      },
       { path: '**', redirectTo: 'login' }, // Wildcard route for undefined paths
     ]),
     importProvidersFrom(FormsModule), // Add FormsModule globally for ngModel

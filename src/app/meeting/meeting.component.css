@@ -1,67 +1,243 @@
-.meeting-container {
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background: #f9f9f9;
-  }
-  
-  h1 {
-    text-align: center;
+/* Global Styling */
+body {
+    font-family: 'Inter', Arial, sans-serif;
+    background-color: #f9f9f9;
     color: #333;
-  }
-  
-  .error-message {
-    color: red;
-    font-weight: bold;
-    text-align: center;
-  }
-  
-  .loading {
-    text-align: center;
-    font-style: italic;
-    color: #666;
-  }
-  
-  .no-meetings {
-    text-align: center;
-    font-size: 1.2em;
-    color: #555;
-  }
-  
-  .meeting-list {
-    list-style: none;
+    margin: 0;
     padding: 0;
+    line-height: 1.6;
   }
   
-  .meeting-item {
-    margin-bottom: 15px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background: #fff;
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
   }
   
-  .meeting-item h2 {
-    margin: 0 0 10px;
-    color: #333;
+  /* Header */
+  header {
+    text-align: center;
+    margin-bottom: 40px;
   }
   
-  .meeting-item p {
-    margin: 5px 0;
+  header h1 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 10px;
   }
   
-  button {
-    padding: 8px 12px;
+  header p {
+    font-size: 1.2rem;
+    color: #64748b;
+  }
+  
+  /* Card Styles */
+  .card {
+    background: #ffffff;
     border: none;
-    border-radius: 4px;
-    background-color: #007bff;
-    color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card-header {
+    font-size: 1.5rem;
+    font-weight: 600;
+    background: #f1f5f9;
+    border-bottom: none;
+    padding: 20px;
+    color: #0f172a;
+    border-radius: 12px 12px 0 0;
+  }
+  
+  .card-body {
+    padding: 20px;
+  }
+  
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: #f9fafb;
+    border-radius: 0 0 12px 12px;
+    border-top: none;
+  }
+  
+  /* Form Styles */
+  form {
+    margin-bottom: 30px;
+  }
+  
+  form .form-label {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #1e293b;
+  }
+  
+  form input,
+  form textarea {
+    width: 100%;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 10px 15px;
+    font-size: 1rem;
+    background: #f9fafb;
+    color: #374151;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  
+  form input:focus,
+  form textarea:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+    outline: none;
+  }
+  
+  form button {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #ffffff;
+    background: #2563eb;
+    border: none;
+    border-radius: 8px;
+    transition: background 0.3s;
     cursor: pointer;
   }
   
-  button:hover {
-    background-color: #0056b3;
+  form button:hover {
+    background: #1d4ed8;
+  }
+  
+  /* Buttons */
+  button {
+    border: none;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  button.btn-sm {
+    font-size: 0.85rem;
+    padding: 6px 10px;
+  }
+  
+  button.btn-success {
+    background-color: #10b981;
+    color: white;
+  }
+  
+  button.btn-success:hover {
+    background-color: #059669;
+  }
+  
+  button.btn-warning {
+    background-color: #f59e0b;
+    color: white;
+  }
+  
+  button.btn-warning:hover {
+    background-color: #d97706;
+  }
+  
+  button.btn-danger {
+    background-color: #ef4444;
+    color: white;
+  }
+  
+  button.btn-danger:hover {
+    background-color: #dc2626;
+  }
+  
+  /* Meetings List */
+  .card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1e293b;
+  }
+  
+  .card-text {
+    font-size: 0.95rem;
+    color: #64748b;
+  }
+  
+  .card-footer .btn {
+    margin-right: 10px;
+  }
+  
+  .card-footer .btn:last-child {
+    margin-right: 0;
+  }
+  
+  /* Empty State */
+  .text-muted {
+    font-size: 1.1rem;
+    color: #9ca3af;
+  }
+  
+  .empty-state {
+    text-align: center;
+    margin-top: 50px;
+  }
+  
+  .empty-state i {
+    font-size: 4rem;
+    color: #d1d5db;
+  }
+  
+  .empty-state p {
+    margin-top: 20px;
+    font-size: 1.2rem;
+    color: #6b7280;
+  }
+  
+  /* Spinner */
+  .spinner-border {
+    width: 3rem;
+    height: 3rem;
+    color: #2563eb;
+  }
+  
+  .spinner-border span {
+    display: none;
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    header h1 {
+      font-size: 2.2rem;
+    }
+  
+    header p {
+      font-size: 1rem;
+    }
+  
+    form button {
+      font-size: 0.9rem;
+    }
+  
+    .card-footer {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  
+    .card-footer .btn {
+      margin-bottom: 10px;
+    }
+  
+    .card-footer .btn:last-child {
+      margin-bottom: 0;
+    }
   }
   
