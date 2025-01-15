@@ -1,7 +1,12 @@
-<nav>
-  <a routerLink="/login">Login</a> |
-  <a routerLink="/register">Register</a> |
-  <a routerLink="/meeting">Meeting</a>
-</nav>
-<hr />
+<header class="navbar">
+  <div class="navbar-logo">
+    <a routerLink="/">MitMe</a>
+  </div>
+  <nav class="navbar-menu">
+    <a routerLink="/login" routerLinkActive="active">Login</a>
+    <a routerLink="/register" routerLinkActive="active">Register</a>
+    <a routerLink="/meeting" routerLinkActive="active">Meetings</a>
+  </nav>
+</header>
+
 <router-outlet></router-outlet>
